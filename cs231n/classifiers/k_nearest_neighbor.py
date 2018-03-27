@@ -73,7 +73,7 @@ class KNearestNeighbor(object):
         # training point, and store the result in dists[i, j]. You should   #
         # not use a loop over dimension.                                    #
         #####################################################################
-        pass
+        dists[i,j] = np.linalg.norm(X[i]-self.X_train[j])
         #####################################################################
         #                       END OF YOUR CODE                            #
         #####################################################################
@@ -95,7 +95,7 @@ class KNearestNeighbor(object):
       # Compute the l2 distance between the ith test point and all training #
       # points, and store the result in dists[i, :].                        #
       #######################################################################
-      pass
+      dists[i,:] = np.sqrt(np.sum((X[i,:]-self.X_train[:,:])**2,axis=1))
       #######################################################################
       #                         END OF YOUR CODE                            #
       #######################################################################
@@ -123,7 +123,7 @@ class KNearestNeighbor(object):
     # HINT: Try to formulate the l2 distance using matrix multiplication    #
     #       and two broadcast sums.                                         #
     #########################################################################
-    pass
+    dists[:,:] = np.sqrt(((np.sum((X[:,:])**2,axis=1))[:,np.newaxis]+(np.sum((self.X_train[:,:])**2,axis=1))[np.newaxis,:])-2*(np.dot(X[:,:],self.X_train[:,:].T)))
     #########################################################################
     #                         END OF YOUR CODE                              #
     #########################################################################
@@ -145,28 +145,35 @@ class KNearestNeighbor(object):
     num_test = dists.shape[0]
     y_pred = np.zeros(num_test)
     for i in xrange(num_test):
-      # A list of length k storing the labels of the k nearest neighbors to
-      # the ith test point.
-      closest_y = []
-      #########################################################################
-      # TODO:                                                                 #
-      # Use the distance matrix to find the k nearest neighbors of the ith    #
-      # testing point, and use self.y_train to find the labels of these       #
-      # neighbors. Store these labels in closest_y.                           #
-      # Hint: Look up the function numpy.argsort.                             #
-      #########################################################################
-      pass
-      #########################################################################
-      # TODO:                                                                 #
-      # Now that you have found the labels of the k nearest neighbors, you    #
-      # need to find the most common label in the list closest_y of labels.   #
-      # Store this label in y_pred[i]. Break ties by choosing the smaller     #
-      # label.                                                                #
-      #########################################################################
-      pass
-      #########################################################################
-      #                           END OF YOUR CODE                            # 
-      #########################################################################
+    	# A list of length k storing the labels of the k nearest neighbors to
+    	# the ith test point.
+    	closest_y = []
+    	#########################################################################
+    	# TODO:                                                                 #
+    	# Use the distance matrix to find the k nearest neighbors of the ith    #
+    	# testing point, and use self.y_train to find the labels of these       #
+    	# neighbors. Store these labels in closest_y.                           #
+    	# Hint: Look up the function numpy.argsort.                             #
+    	#########################################################################
+    	closest_y = self.y_train[np.argsort(dists[i,:])[:k]]
+    	#########################################################################
+    	# TODO:                                                                 #
+    	# Now that you have found the labels of the k nearest neighbors, you    #
+    	# need to find the most common label in the list closest_y of labels.   #
+    	# Store this label in y_pred[i]. Break ties by choosing the smaller     #
+    	# label.                                                                #
+    	#########################################################################
+    	mydict = {}
+    	cnt, itm = 0, ''
+    	for item in closest_y: 
+    		mydict[item] = mydict.get(item, 1) + 1 # 0 as defult
+    	for item in closest_y:
+    		if mydict[item] > cnt : # only update cnt if 
+    			cnt, itm = mydict[item], item
+    	y_pred[i] = itm
+    	#########################################################################
+    	#                           END OF YOUR CODE                            # 
+    	#########################################################################
 
     return y_pred
 
