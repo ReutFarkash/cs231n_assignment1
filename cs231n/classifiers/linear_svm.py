@@ -44,10 +44,10 @@ def svm_loss_naive(W, X, y, reg):
   # to be an average instead so we divide by num_train.
   loss /= num_train
   dW /= num_train
-  dW += reg*W
+  dW += 2*reg*W
 
   # Add regularization to the loss.
-  loss += 0.5*reg * np.sum(W * W)
+  loss += reg * np.sum(W * W)
 
   #############################################################################
   # TODO:                                                                     #
@@ -83,7 +83,7 @@ def svm_loss_vectorized(W, X, y, reg):
   margin[np.arange(len(y)), y] = 0 # to acount for the continue condion when y[i] = j in the unvectorized version
   loss = np.sum(margin[margin>0])
   loss /= num_train
-  loss += 0.5*reg * np.sum(W * W)
+  loss += reg * np.sum(W * W)
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -103,7 +103,7 @@ def svm_loss_vectorized(W, X, y, reg):
   mask[np.arange(num_train), y] = -np.sum(mask, axis=1) # count the number of accurences
   dW = X.T.dot(mask)
   dW /= num_train
-  dW += reg*W
+  dW += 2*reg*W
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
